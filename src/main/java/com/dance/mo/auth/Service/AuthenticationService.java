@@ -48,7 +48,7 @@ public class AuthenticationService {
             throw new UserException("User not found");
         }
        else {
-            System.out.println("");
+
             if (!user.isEnabled()) {
                 System.out.println("user disable");
                 throw new UserException("User account is not active. Please confirm your email.");
@@ -92,7 +92,6 @@ public class AuthenticationService {
     public ProfileDto updateProfile(ProfileDto profileDto)
     {
         var user = userRepository.findById(profileDto.getId()).orElseThrow(() -> new UsernameNotFoundException("user doesnt exits"));
-        System.out.println(user.getUserId());
         user.setFirstName(profileDto.getFirstName());
         user.setLastName(profileDto.getLastName());
         user.setEmail(profileDto.getEmail());

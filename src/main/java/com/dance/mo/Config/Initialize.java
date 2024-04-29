@@ -39,6 +39,7 @@ public class Initialize implements CommandLineRunner {
             adminUser.setFirstName("admin");
             adminUser.setLastName("admin");
             adminUser.setEmail("admin@admin.com");
+            adminUser.setBan(0);
             adminUser.setPhoneNumber(56467563);
             adminUser.setPassword(passwordEncoder.encode("admin"));
             adminUser.setRole(Role.ADMIN);
@@ -58,6 +59,7 @@ public class Initialize implements CommandLineRunner {
                 user.setEmail(email);
                 user.setPhoneNumber(12345678); // Set a constant phone number
                 user.setPassword(passwordEncoder.encode("ahmed")); // Set a constant password
+                user.setBan(0);
                 user.setRole(generateRandomRole()); // Set a random role
                 user.setEnabled(true);
                 userRepository.save(user);

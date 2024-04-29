@@ -193,7 +193,7 @@ private UserRepository userRepository;
         return UPLOAD_DIR + imageName;
     }
 
-    @Scheduled(cron="* * 1 * * * ")
+    @Scheduled(cron = "0 0 8 * * *")
     public void activateBannedAccounts(){
         LocalDateTime d = LocalDateTime.now();
         List<User> list = new ArrayList<>();

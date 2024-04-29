@@ -25,8 +25,10 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -35,7 +37,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfiguration  {
     @Autowired
-    private AuthenticationSuccessHandler OAuth2LoginSuccessHandler;
+    private OAuth2LoginSuccessHandler OAuth2LoginSuccessHandler;
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -99,7 +101,8 @@ public class SecurityConfiguration  {
     }
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
-        return new InMemoryClientRegistrationRepository(Collections.singletonList(
+        List<ClientRegistration> registrations = new ArrayList<>();
+        registrations.add(
                 ClientRegistration.withRegistrationId("google")
                         .clientId("595644901644-l8e6vv6eg1d8t15svj7722gs1k1j5nvd.apps.googleusercontent.com")
                         .clientSecret("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")
@@ -112,7 +115,23 @@ public class SecurityConfiguration  {
                         .userNameAttributeName("sub")
                         .redirectUri("http://localhost:8088/login/oauth2/code/google")
                         .build()
-        ));
+        );
+        registrations.add(
+                ClientRegistration.withRegistrationId("facebook")
+                        .clientId("3627885030786171")
+                        .clientSecret("0216027f5c4e2e7066a08ffe7b44b560")
+                        .scope("email", "public_profile")
+                        .authorizationUri("https://www.facebook.com/v19.0/dialog/oauth")
+                        .tokenUri("https://graph.facebook.com/v19.0/oauth/access_token")
+                        .userInfoUri("https://graph.facebook.com/me?fields=id,name,first_name,middle_name,last_name,email,birthday")
+                        .clientName("Facebook")
+                        .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                        .userNameAttributeName("id")
+                        .redirectUri("http://localhost:8088/login/oauth2/code/facebook")
+                        .build()
+        );
+
+        return new InMemoryClientRegistrationRepository(registrations);
     }
 
 

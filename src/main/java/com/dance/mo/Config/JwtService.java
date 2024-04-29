@@ -22,22 +22,19 @@ public class JwtService {
 
     private static final long DEFAULT_EXPIRATION_TIME_MILLIS = 604800000;
     public String extractUsername(String token) {
-        return extractClaim(token,Claims::getSubject);///email of user
+        return extractClaim(token,Claims::getSubject);
     }
 
-    ///gen token
     public String genToken(UserDetails userDetails , Map<String , String> map){
         return generateToken(map, userDetails, 1000*60*24);
     }
-    ///generation of toke
+
     public String generateToken(
             Map<String, String> extraClaims,
-            UserDetails userDetails, long expirationTimeMillis ){///in case to pass authoroties in extra claims
+            UserDetails userDetails, long expirationTimeMillis ){
         Date issuedAt = new Date();
         Date expirationDate = new Date(issuedAt.getTime() + expirationTimeMillis);
         System.out.println("Expiration Date: " + expirationDate);
-        System.out.println("System daaaate: " +new Date(System.currentTimeMillis()) );
-       // extraClaims.put("role",userDetails);
 
         return Jwts
                 .builder()
@@ -48,7 +45,7 @@ public class JwtService {
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-    ///refresh expired token
+
     public String refreshExpiredToken(String expiredToken) {
         Claims claims = extractAllClaims(expiredToken);
         Date originalExpirationDate = claims.getExpiration();
@@ -64,7 +61,6 @@ public class JwtService {
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-    /// method that can validate token(if token belongs to userdetails email, username in token is it same as userdet username (email)
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
