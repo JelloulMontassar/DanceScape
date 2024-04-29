@@ -17,9 +17,9 @@ public interface ReclamationRepository extends JpaRepository<Reclamation, Long> 
 
     long countByStatus(String status);
 
-    @Query("SELECT r.user.role AS role, COUNT(r) AS count " +
+    @Query("SELECT r.user.userId, r.reclamationDate, COUNT(r) " +
             "FROM Reclamation r " +
-            "GROUP BY r.user.role")
-    List<Map<Role, Long>> countReclamationsByRole();
+            "GROUP BY r.user.userId, r.reclamationDate")
+    List<Object[]> countReclamationsPerUser();
 
 }

@@ -36,8 +36,6 @@ public class ReclamationService {
     }
 
 
-    public List<Map<Role, Long>> countReclamationsByRole() {
-        return reclamationRepository.countReclamationsByRole();
-    }
+
 }
 

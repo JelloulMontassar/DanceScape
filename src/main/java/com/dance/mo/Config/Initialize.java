@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -39,7 +40,6 @@ public class Initialize implements CommandLineRunner {
             adminUser.setFirstName("admin");
             adminUser.setLastName("admin");
             adminUser.setEmail("admin@admin.com");
-            adminUser.setBan(0);
             adminUser.setPhoneNumber(56467563);
             adminUser.setPassword(passwordEncoder.encode("admin"));
             adminUser.setRole(Role.ADMIN);
@@ -49,7 +49,7 @@ public class Initialize implements CommandLineRunner {
     }
 
     private void generateFakeUsers() {
-        List<String> fakeEmails = generateFakeEmails(MAX_FAKE_USERS);
+        List<String> fakeEmails = generateFakeEmails();
 
         for (String email : fakeEmails) {
             if (userRepository.getUserByEmail(email) == null) {
@@ -59,7 +59,6 @@ public class Initialize implements CommandLineRunner {
                 user.setEmail(email);
                 user.setPhoneNumber(12345678); // Set a constant phone number
                 user.setPassword(passwordEncoder.encode("ahmed")); // Set a constant password
-                user.setBan(0);
                 user.setRole(generateRandomRole()); // Set a random role
                 user.setEnabled(true);
                 userRepository.save(user);
@@ -71,9 +70,9 @@ public class Initialize implements CommandLineRunner {
         }
     }
 
-    private List<String> generateFakeEmails(int numUsers) {
+    private List<String> generateFakeEmails() {
         List<String> fakeEmails = new ArrayList<>();
-        for (int i = 1; i <= numUsers; i++) {
+        for (int i = 1; i <= Initialize.MAX_FAKE_USERS; i++) {
             fakeEmails.add("user" + i + "@example.com");
         }
         return fakeEmails;
@@ -81,6 +80,14 @@ public class Initialize implements CommandLineRunner {
 
     private Role generateRandomRole() {
         Role[] roles = Role.values();
-        return roles[new Random().nextInt(roles.length)]; // Get a random role from Role enum
+        List<Role> rolesList = Arrays.stream(roles)
+                .filter(role -> role != Role.ADMIN).toList();
+        if (rolesList.isEmpty()) {
+            throw new IllegalStateException("No non-ADMIN roles found in Role enum.");
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(rolesList.size());
+        return rolesList.get(randomIndex);
     }
 }
+
