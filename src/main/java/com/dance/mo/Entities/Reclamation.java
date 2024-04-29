@@ -22,6 +22,9 @@ public class Reclamation {
     private String result;
 
     private String description;
+    @Lob
+    @Column(columnDefinition = "MEDIUMBLOB")
+    private  byte[] screenshot;
 
 
 }

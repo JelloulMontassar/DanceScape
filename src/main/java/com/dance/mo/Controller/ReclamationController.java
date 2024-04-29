@@ -89,6 +89,7 @@ public class ReclamationController {
         recDTO.setDescription(rec.getDescription());
         recDTO.setUserId(rec.getUser());
         recDTO.setResult(rec.getResult());
+        recDTO.setScreenshot(rec.getScreenshot());
         return recDTO;
     }
 

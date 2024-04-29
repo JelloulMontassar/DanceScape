@@ -15,6 +15,7 @@ public class ReclamationDTO {
     private String status;
     private String result;
     private String description;
+    private byte[] screenshot;
 
 }
 
