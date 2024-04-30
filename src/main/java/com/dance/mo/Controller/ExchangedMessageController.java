@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/ExchangedMessages")
@@ -56,6 +53,31 @@ public class ExchangedMessageController {
         } catch (Exception e) {
             // Log error and return internal server error response
             System.err.println("Error fetching exchanged messages: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @PutMapping("/delete/{messageId}")
+    public ResponseEntity<Void> deleteMessage(@PathVariable Long messageId) {
+        try {
+            // Get the message by its ID
+            Optional<ExchangedMessages> message = exchangedMessagesService.findById(messageId);
+
+            // Check if the message exists
+            if (message.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            // Update the content of the message to "This message has been deleted"
+            message.get().setContent("This message has been deleted");
+
+            // Save the changes
+            exchangedMessagesService.saveMessage(message.get());
+
+            // Return no content response to indicate successful deletion
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            // Log error and return internal server error response
+            System.err.println("Error deleting message: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

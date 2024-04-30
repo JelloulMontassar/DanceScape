@@ -56,7 +56,9 @@ public class ChatController {
         savedMessage.setReceiver(receiver);
         savedMessage.setSender(sender);
         savedMessage.setSentTime(LocalDateTime.now());
-        exchangedMessagesService.saveMessage(savedMessage);
+
+        ExchangedMessages savedMessage1 = exchangedMessagesService.saveMessage(savedMessage);
+        message.setId(savedMessage1.getId());
         System.out.println("Received message: " + message);
         System.out.println("Receiver name: " + message.getReceiverName());
         messagingTemplate.convertAndSendToUser(user, "/private", message);

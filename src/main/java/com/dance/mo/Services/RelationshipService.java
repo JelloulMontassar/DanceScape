@@ -61,22 +61,58 @@ public class RelationshipService {
     }
 
     public void blockUser(User currentUser, User userToBlock) {
-        Relationship relationship = relationshipRepository.findBySenderAndReceiver(currentUser, userToBlock);
-        if (relationship == null) {
-            relationship = new Relationship();
-            relationship.setSender(currentUser);
-            relationship.setReceiver(userToBlock);
+        // Find the relationship where the current user is the sender and the user to block is the receiver
+        Relationship relationship1 = relationshipRepository.findBySenderAndReceiver(currentUser, userToBlock);
+        if (relationship1 == null) {
+            relationship1 = new Relationship();
+            relationship1.setSender(currentUser);
+            relationship1.setReceiver(userToBlock);
         }
-        relationship.setStatus(RelationshipStatus.BLOCKED);
-        relationshipRepository.save(relationship);
+        relationship1.setStatus(RelationshipStatus.BLOCKED);
+        relationshipRepository.save(relationship1);
+
+        // Find the relationship where the user to block is the sender and the current user is the receiver
+        Relationship relationship2 = relationshipRepository.findBySenderAndReceiver(userToBlock, currentUser);
+        if (relationship2 == null) {
+            relationship2 = new Relationship();
+            relationship2.setSender(userToBlock);
+            relationship2.setReceiver(currentUser);
+        }
+        relationship2.setStatus(RelationshipStatus.BLOCKED);
+        relationshipRepository.save(relationship2);
     }
 
-    public void unblockUser(User currentUser, User userToUnblock) {
-        Relationship relationship = relationshipRepository.findBySenderAndReceiver(currentUser, userToUnblock);
-        if (relationship != null && relationship.getStatus() == RelationshipStatus.BLOCKED) {
-            relationshipRepository.delete(relationship);
+    public RelationshipStatus checkRelationshipStatus(User currentUserId, User otherUserId) {
+        Relationship relationship = relationshipRepository.findBySenderAndReceiver(currentUserId, otherUserId);
+        if (relationship == null) {
+            return RelationshipStatus.NONE;
+        } else {
+            return relationship.getStatus();
         }
     }
+    public void unblockUser(User currentUser, User userToUnblock) {
+        // Retrieve the relationship from current user to the user to unblock
+        Relationship relationshipCurrentToUnblock = relationshipRepository.findBySenderAndReceiver(currentUser, userToUnblock);
+
+        // Retrieve the relationship from user to unblock to the current user
+        Relationship relationshipUnblockToCurrent = relationshipRepository.findBySenderAndReceiver(userToUnblock, currentUser);
+
+        // If there is a blocked relationship from current user to user to unblock, update its status to ACCEPTED
+        if (relationshipCurrentToUnblock != null && relationshipCurrentToUnblock.getStatus() == RelationshipStatus.BLOCKED) {
+            relationshipCurrentToUnblock.setStatus(RelationshipStatus.ACCEPTED);
+            relationshipRepository.save(relationshipCurrentToUnblock);
+            System.out.println("Updated relationship from current user to user to unblock to ACCEPTED.");
+        }
+
+        // If there is a blocked relationship from user to unblock to current user, update its status to ACCEPTED
+        if (relationshipUnblockToCurrent != null && relationshipUnblockToCurrent.getStatus() == RelationshipStatus.BLOCKED) {
+            relationshipUnblockToCurrent.setStatus(RelationshipStatus.ACCEPTED);
+            relationshipRepository.save(relationshipUnblockToCurrent);
+            System.out.println("Updated relationship from user to unblock to current user to ACCEPTED.");
+        }
+    }
+
+
 
     public boolean canSendMessage(User sender, User receiver) {
         Relationship relationship1 = relationshipRepository.findBySenderAndReceiver(sender, receiver);

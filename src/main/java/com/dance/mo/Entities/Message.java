@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class Message {
+    private Long id;
     private String senderName;
     private String receiverName;
     private String message;

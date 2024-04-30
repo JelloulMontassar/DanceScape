@@ -30,20 +30,35 @@ public class ReactService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         ForumPost post = forumPostRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Forum post not found with id: " + postId));
-
         React existingReact = reactRepository.findByUserAndForumPost(user, post);
         if (existingReact != null) {
-            // User has already reacted to the post
-            throw new IllegalStateException("User has already liked this post");
-        }
 
-        // Proceed to add the like
-        react.setUser(user);
-        react.setLiked(true);
-        react.setDislike(false);
-        react.setForumPost(post);
-        return reactRepository.save(react);
+            if (existingReact.isLiked()) {
+
+
+                    existingReact.setLiked(false);
+                    existingReact.setDislike(true);
+
+            } else if (existingReact.isDislike()) {
+
+                    existingReact.setDislike(false);
+                    existingReact.setLiked(true);
+
+            }
+            return reactRepository.save(existingReact);
+        } else {
+            react.setUser(user);
+            react.setForumPost(post);
+
+
+                react.setLiked(true);
+
+
+            // Save the new react
+            return reactRepository.save(react);
+        }
     }
+
 
     @Transactional
     public React addReactDislikeToForumPost(Long postId, Long userId, React react) {

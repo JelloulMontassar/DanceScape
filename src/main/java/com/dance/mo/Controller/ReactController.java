@@ -19,7 +19,7 @@ public class ReactController {
 
     @PostMapping("/like/{postId}/{idUser}")
     public React addLikeReactToForumPost(@PathVariable Long postId,@PathVariable  Long idUser, @RequestBody React react) {
-  return reactService.addReactLikeToForumPost(postId,idUser,react);
+        return reactService.addReactLikeToForumPost(postId,idUser,react);
 
     }
     @PostMapping("/dislike/{postId}/{idUser}")
