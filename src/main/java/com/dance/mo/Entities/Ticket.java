@@ -21,7 +21,7 @@ public class Ticket implements Serializable {
     @Enumerated(EnumType.STRING)
     private TicketType ticketType;
     private double price;
-    private String availability;
+    private boolean availability;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Competition competition;
@@ -29,6 +29,6 @@ public class Ticket implements Serializable {
     @OneToOne
     private Payment payment;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private User buyer;
 }

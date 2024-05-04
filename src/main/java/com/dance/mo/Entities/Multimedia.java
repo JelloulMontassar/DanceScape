@@ -19,13 +19,15 @@ public class Multimedia implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id_multimedia;
 
-    private Long mulitimediaId;
-    @Temporal(TemporalType.DATE)
-    private Date uploadDate;
+    private String videoUrl;
+    @ManyToOne
+    private User user;
+
     @Enumerated(EnumType.STRING)
     private FileType fileType;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Competition competition;
 }

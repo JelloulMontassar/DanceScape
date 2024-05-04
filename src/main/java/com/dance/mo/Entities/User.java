@@ -88,10 +88,10 @@ public class User implements UserDetails {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "dsUsers")
     private  List<DanceSchool> danceSchools;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "buyer")
-    private Ticket ticket;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "buyer")
+    private List<Ticket> tickets;
 
-    @OneToMany (mappedBy = "competitor",cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Competition> competitions;
 
     @ManyToMany(cascade = CascadeType.ALL , mappedBy = "resUsers")
