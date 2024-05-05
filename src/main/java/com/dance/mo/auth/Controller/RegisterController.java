@@ -2,6 +2,7 @@ package com.dance.mo.auth.Controller;
 
 import com.dance.mo.Exceptions.UserException;
 import com.dance.mo.auth.DTO.RegisterRequest;
+import com.dance.mo.auth.DTO.RegisterResponse;
 import com.dance.mo.auth.Service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,15 +17,21 @@ import java.util.Arrays;
 public class RegisterController {
     private final RegistrationService service;
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<RegisterResponse> registerUser(@RequestBody RegisterRequest registerRequest) {
+        RegisterResponse registerResponse = new RegisterResponse();
         try {
-            String jwtToken = service.register(registerRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(jwtToken);
+            service.register(registerRequest);
+            registerResponse.setMessageResponse("User Created");
+            registerResponse.setEmailResponse(registerRequest.getEmail());
+            registerResponse.setRoleResponse(registerRequest.getRole().name());
+            return ResponseEntity.status(HttpStatus.CREATED).body(registerResponse);
         }catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            registerResponse.setMessageResponse(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponse);
         } catch (Exception e) {
+            registerResponse.setMessageResponse("An error occurred while registering user.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while registering user.");
+                    .body(registerResponse);
         }
     }
     @GetMapping("/confirm")
