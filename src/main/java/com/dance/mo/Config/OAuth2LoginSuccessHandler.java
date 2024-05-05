@@ -63,6 +63,26 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 user.setFirstName(Objects.requireNonNull(oauth2User.getAttribute("given_name")));
                 user.setLastName(Objects.requireNonNull(oauth2User.getAttribute("family_name")));
             }
+            else if (provider.equals("github")) {
+                String fullName = oauth2User.getAttribute("name");
+
+                if (fullName != null && !fullName.isEmpty()) {
+                    String[] nameParts = fullName.split(" ");
+
+                    if (nameParts.length >= 2) {
+                        String firstName = nameParts[0];
+                        String lastName = nameParts[nameParts.length - 1];
+
+                        user.setFirstName(firstName);
+                        user.setLastName(lastName);
+                    } else {
+                        System.out.println("The name doesn't contain a space-separated first and last name.");
+                    }
+                } else {
+                    System.out.println("The name attribute is not available for the user.");
+                }
+            }
+
             userRepository.save(user);
             onlineUsers.add(user.getEmail());
             token(response, Optional.of(user));

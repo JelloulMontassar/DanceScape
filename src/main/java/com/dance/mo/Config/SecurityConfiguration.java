@@ -130,6 +130,21 @@ public class SecurityConfiguration  {
                         .redirectUri("http://localhost:8088/login/oauth2/code/facebook")
                         .build()
         );
+        registrations.add(
+                ClientRegistration.withRegistrationId("github")
+                        .clientId("Ov23lipsDOtVHodlsVct")
+                        .clientSecret("5e344c14fdad8fa167aeea8ec8e88a23cc7751d8")
+                        .scope("read:user", "user:email")
+                        .authorizationUri("https://github.com/login/oauth/authorize")
+                        .tokenUri("https://github.com/login/oauth/access_token")
+                        .userInfoUri("https://api.github.com/user")
+                        .clientName("GitHub")
+                        .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                        .userNameAttributeName("name")
+                        .redirectUri("http://localhost:8088/login/oauth2/code/github")
+                        .build()
+        );
+
 
         return new InMemoryClientRegistrationRepository(registrations);
     }
