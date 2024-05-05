@@ -41,7 +41,6 @@ public class User implements UserDetails {
     @NonNull
     @Email
     private String email;
-    @NonNull
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -99,7 +98,7 @@ public class User implements UserDetails {
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Reclamation> reclamations;
-
+    private String loginProvider;
 ////////
 ///return list of roles
 

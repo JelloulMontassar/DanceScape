@@ -44,6 +44,7 @@ public class Initialize implements CommandLineRunner {
             adminUser.setPassword(passwordEncoder.encode("admin"));
             adminUser.setRole(Role.ADMIN);
             adminUser.setEnabled(true);
+            adminUser.setLoginProvider("LOCAL");
             userRepository.save(adminUser);
         }
     }
@@ -61,6 +62,7 @@ public class Initialize implements CommandLineRunner {
                 user.setPassword(passwordEncoder.encode("ahmed")); // Set a constant password
                 user.setRole(generateRandomRole()); // Set a random role
                 user.setEnabled(true);
+                user.setLoginProvider("LOCAL");
                 userRepository.save(user);
 
                 if (userRepository.count() >= MAX_FAKE_USERS) {

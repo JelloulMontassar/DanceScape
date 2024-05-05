@@ -36,6 +36,7 @@ public class UserService {
         newUser.setPhoneNumber(user.getPhoneNumber());
         newUser.setRole(user.getRole());
         newUser.setEnabled(true);
+        newUser.setLoginProvider("LOCAL");
         /*if (user.getImage() != null){
             newUser.setImage(Base64.getDecoder().decode(user.getImage()));
         }*/

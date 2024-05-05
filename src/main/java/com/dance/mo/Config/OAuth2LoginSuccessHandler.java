@@ -53,7 +53,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             User user = new User();
             user.setEnabled(true);
             user.setRole(Role.USER);
-            user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(generateSecureRandomPassword()));
+            user.setLoginProvider(provider);
             user.setEmail(Objects.requireNonNull(oauth2User.getAttribute("email")));
             if (provider.equals("facebook")) {
                 System.out.println(Optional.ofNullable(oauth2User.getAttribute("name")));

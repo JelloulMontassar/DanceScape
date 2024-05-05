@@ -69,29 +69,34 @@ public class AuthenticationController {
     public ResponseEntity<ForgotPasswordResponse> forgetPassword(@PathVariable String email) {
         User user = service.resetUserByEmail(email);
         ForgotPasswordResponse response = new ForgotPasswordResponse(user.getEmail());
-         long resetToken = Long.parseLong(generateActivationCode(6));
-        System.out.println(resetToken);
-        user.setResetToken(resetToken);
-        String jwtToken = Jwts.builder()
-                .setSubject(user.getEmail())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + DEFAULT_EXPIRATION_TIME_MILLIS))
-                .claim("resetToken", resetToken)
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
-        userService.updateUser(user.getUserId(),user);
-        try {
-            emailPwd.sendEmail(
-                    user.getEmail(),
-                    user.getFirstName(),
-                    "resetpwd",
-                    String.format(CONFIRMATION_URL, jwtToken),
-                    String.valueOf(resetToken)
-            );
-        } catch (MessagingException e) {
-            e.printStackTrace();
+        if (user.getLoginProvider().equals("LOCAL")) {
+            long resetToken = Long.parseLong(generateActivationCode(6));
+            System.out.println(resetToken);
+            user.setResetToken(resetToken);
+            String jwtToken = Jwts.builder()
+                    .setSubject(user.getEmail())
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(System.currentTimeMillis() + DEFAULT_EXPIRATION_TIME_MILLIS))
+                    .claim("resetToken", resetToken)
+                    .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                    .compact();
+            userService.updateUser(user.getUserId(), user);
+            try {
+                emailPwd.sendEmail(
+                        user.getEmail(),
+                        user.getFirstName(),
+                        "resetpwd",
+                        String.format(CONFIRMATION_URL, jwtToken),
+                        String.valueOf(resetToken)
+                );
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+            return ResponseEntity.ok(response);
         }
-        return ResponseEntity.ok(response);
+        response.setEmail(email);
+        response.setMessageResponse("This account is registered with Oauth2 you can't reset password !");
+        return ResponseEntity.status(403).body(response);
     }
 
     private String generateActivationCode(int length) {
@@ -113,7 +118,7 @@ public class AuthenticationController {
     public ResponseEntity<ForgotPasswordResponse> CforgetPassword(@RequestBody CforgotPasswordRequest CRequest) {
         User user = service.resetUserByEmail(CRequest.getEmail());
         long cReset  = Long.parseLong(CRequest.getResetToken());
-        if (Objects.equals(user.getResetToken() ,cReset)&&user.getEmail().equals(CRequest.getEmail())){
+        if (Objects.equals(user.getResetToken() ,cReset)&&user.getEmail().equals(CRequest.getEmail())&&user.getLoginProvider().equals("LOCAL")){
             String newPassword = CRequest.getNewPassword();
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String hashedPassword = passwordEncoder.encode(newPassword);
