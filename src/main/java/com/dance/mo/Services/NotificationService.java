@@ -1,6 +1,7 @@
 package com.dance.mo.Services;
 
 import com.dance.mo.Entities.Notification;
+import com.dance.mo.Entities.User;
 import com.dance.mo.Repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,9 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
-    public List<Notification> getLatestNotifications() {
+    public List<Notification> getLatestNotifications(User user) {
 
-        return notificationRepository.findBySeenFalse();
+        return notificationRepository.findBySeenFalseAndReceiver(user);
     }
 
     public Notification getNotification(Long notificationId) {

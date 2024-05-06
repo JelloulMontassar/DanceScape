@@ -1,14 +1,18 @@
 package com.dance.mo.Controller;
 
 import com.dance.mo.Entities.Enumarations.RelationshipStatus;
+import com.dance.mo.Entities.Notification;
 import com.dance.mo.Entities.Relationship;
 import com.dance.mo.Entities.User;
+import com.dance.mo.Services.NotificationService;
 import com.dance.mo.Services.RelationshipService;
 import com.dance.mo.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
 
 @RestController
@@ -20,6 +24,10 @@ public class RelationshipController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private NotificationService notificationService ;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
     @GetMapping("/pending/{receiverId}")
     public ResponseEntity<List<Relationship>> getPendingFriendRequests(@PathVariable Long receiverId) {
         User user = userService.getUserById(receiverId);
@@ -30,8 +38,15 @@ public class RelationshipController {
     public ResponseEntity<Void> sendFriendRequest(@PathVariable Long senderId, @PathVariable String receiverId) {
         User sender = userService.getUserById(senderId);
         User receiver = userService.getUserByEmail(receiverId);
-
         relationshipService.sendFriendRequest(sender, receiver);
+        Notification notification = new Notification();
+        notification.setReceiver(receiver);
+        notification.setMessage("You have a new friend request.");
+        notification.setSendDate(new Date(System.currentTimeMillis()));
+        notification.setSeen(false);
+        String destination = "/topic/notifications/" + receiver.getUserId();
+        notificationService.sendNotification(notification);
+        messagingTemplate.convertAndSend(destination, notification);
         return ResponseEntity.ok().build();
     }
 

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 
@@ -26,8 +27,9 @@ public class AdminController {
     private NotificationService notificationService;
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
     @GetMapping("/notifications")
-    public List<Notification> getAllNotifications() {
-        return notificationService.getLatestNotifications();
+    public List<Notification> getAllNotifications(Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
+        return notificationService.getLatestNotifications(user);
     }
     @PostMapping("/notifications/{notificationId}")
     public Notification openNotification(@PathVariable Long notificationId) {
