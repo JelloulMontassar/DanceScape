@@ -16,6 +16,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class RegisterController {
     private final RegistrationService service;
+
+
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> registerUser(@RequestBody RegisterRequest registerRequest) {
         RegisterResponse registerResponse = new RegisterResponse();
@@ -46,6 +48,7 @@ public class RegisterController {
                     .body("An error occurred while confirming user.");
         }
     }
+
 
 
 }

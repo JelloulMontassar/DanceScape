@@ -134,8 +134,12 @@ public class AuthenticationController {
 
 
     @GetMapping("/onlineUsers")
-    public Set<String> getOnlineUsers() {
-        return onlineUsers;
+    public List<User> getOnlineUsers() {
+        List<User> usersByEmail = new ArrayList<>();
+        for (String email : onlineUsers) {
+            usersByEmail.add(userService.getUserByEmail(email));
+        }
+        return usersByEmail;
     }
 
 
