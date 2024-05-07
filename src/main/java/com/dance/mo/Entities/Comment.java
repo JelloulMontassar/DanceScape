@@ -37,7 +37,7 @@ public class Comment implements Serializable {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
     private Set<SousComment> sousComments;
 
-    @ManyToOne( )
+    @ManyToOne
     private User user;
 
 

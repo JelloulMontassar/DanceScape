@@ -23,7 +23,7 @@ public class NotificationService {
 
     public List<Notification> getLatestNotifications(User user) {
 
-        return notificationRepository.findBySeenFalseAndReceiver(user);
+        return notificationRepository.findBySeenFalseAndReceiverOrderBySendDateDesc(user);
     }
 
     public Notification getNotification(Long notificationId) {

@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     List<Notification> findTop10ByOrderBySendDateDesc();
-    List<Notification> findBySeenFalseAndReceiver(User receiver);
+    List<Notification> findBySeenFalseAndReceiverOrderBySendDateDesc(User receiver);
 
 }

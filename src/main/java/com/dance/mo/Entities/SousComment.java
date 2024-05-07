@@ -25,7 +25,7 @@ public class SousComment implements Serializable {
     @ManyToOne
     private Comment comment;
     @JsonIgnore
-    @ManyToOne()
+    @ManyToOne
     private User user;
 
 }
