@@ -40,7 +40,7 @@ public class ChatController {
     public void handlePrivateMessage(@Payload Message message, @DestinationVariable("session") String user) {
         User sender = userService.getUserByEmail(message.getSenderName());
         User receiver = userService.getUserByEmail(message.getReceiverName());
-        System.out.println("RECEIVED");
+        System.out.println("RECEIVED   ");
 
         Iterator<User> it = sender.getFriends().iterator();
         System.out.println(sender);
