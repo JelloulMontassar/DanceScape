@@ -17,6 +17,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,8 @@ public class AuthenticationController {
     private final UserService userService;
     private final JwtService jwtService;
     private final RedisService redisService;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     public static Set<String> onlineUsers = new HashSet<>();
     private static final String CONFIRMATION_URL = "http://localhost:4200/forgot-password/%s";
     ///  endpoint : authenticate an existing user
@@ -118,17 +120,19 @@ public class AuthenticationController {
     public ResponseEntity<ForgotPasswordResponse> CforgetPassword(@RequestBody CforgotPasswordRequest CRequest) {
         User user = service.resetUserByEmail(CRequest.getEmail());
         long cReset  = Long.parseLong(CRequest.getResetToken());
-        if (Objects.equals(user.getResetToken() ,cReset)&&user.getEmail().equals(CRequest.getEmail())&&user.getLoginProvider().equals("LOCAL")){
+
+        System.out.println(Objects.equals(user.getResetToken() ,cReset));
+        System.out.println(user.getEmail().equals(CRequest.getEmail().toLowerCase()));
+        if (Objects.equals(user.getResetToken() ,cReset)&&user.getEmail().equals(CRequest.getEmail().toLowerCase())){
             String newPassword = CRequest.getNewPassword();
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String hashedPassword = passwordEncoder.encode(newPassword);
             user.setPassword(hashedPassword);
             service.updateUser(user);
             return  ResponseEntity.ok(new ForgotPasswordResponse(CRequest.getEmail()));
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ForgotPasswordResponse.builder()
-                        .messageResponse("An error occurred during password reset")
+                        .messageResponse("Invalid reset token or email")
                         .build());
     }
 

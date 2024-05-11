@@ -36,6 +36,9 @@ public class ProfileController {
     @PutMapping("/updateProfile")
     public ResponseEntity<ProfileDto> updateUserProfile(Authentication authentication,@RequestBody ProfileDto profileDto) {
         System.out.println(profileDto.getId());
+        User user  =  authenticationService.getUser(authentication);
+        profileDto.setId(user.getUserId());
+        profileDto.setRole(user.getRole());
         ProfileDto updatedProfile = authenticationService.updateProfile(profileDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedProfile);
     }

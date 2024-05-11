@@ -63,7 +63,7 @@ public class SecurityConfiguration  {
    public CorsFilter corsFilter() {
        CorsConfiguration config = new CorsConfiguration();
        config.setAllowCredentials(true); // Allow credentials (cookies)
-       config.addAllowedOrigin("http://localhost:4200"); // Add the origin of your frontend application
+       config.addAllowedOrigin("http://localhost:4200"); // Add the origin of your frontend application.yml
        config.addAllowedHeader("*");
        config.addAllowedMethod("*");
        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

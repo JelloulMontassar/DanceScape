@@ -48,9 +48,7 @@ public class ChatController {
         while (it.hasNext()){
             System.out.println(it.next());
         }
-        if (!sender.getFriends().stream().anyMatch(friend -> friend.getUserId().equals(receiver.getUserId()))) {
-            throw new IllegalArgumentException("Cannot send messages to this user. They are not in your friend list.");
-        }
+
         ExchangedMessages savedMessage = new ExchangedMessages();
         savedMessage.setContent(message.getMessage());
         savedMessage.setReceiver(receiver);
